@@ -1,0 +1,199 @@
+﻿@model IEnumerable<InventoryManager.Models.Inventory>
+@{
+    ViewBag.Title = "Index";
+}
+<div class="container">
+<h2>Inventory</h2>
+
+<p>
+    @if (HttpContext.Current.User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Create New", "Create")
+    }
+
+    @using (Html.BeginForm("Search","Inventories",FormMethod.Get))
+    {
+        <br>
+    <p>
+        SKU: @Html.TextBox("searchSKU")
+        <input type="submit" value="Search" />
+    </p>
+    }
+  </div>  
+
+
+<br>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.SKU)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ItemName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Quantity)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Location)
+        </th>
+        <th>
+            @if (HttpContext.Current.User.IsInRole("Admin"))
+            {
+                @Html.DisplayNameFor(model => model.QuantityWarningLevel)
+            }
+        </th>
+        <th>
+            @if (HttpContext.Current.User.IsInRole("Admin"))
+            {
+                @Html.DisplayNameFor(model => model.QuantityRefill)
+            }
+        </th>
+        <th>
+            @if (HttpContext.Current.User.IsInRole("Admin"))
+            {
+                @Html.DisplayNameFor(model => model.QuantityBehavior)
+            }
+        </th>
+        <th></th>
+    </tr>
+
+
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SKU)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemName)
+            </td>
+            <td>
+                @if (item.Quantity < item.QuantityWarningLevel)
+                {
+                    <p style="color: red">@item.Quantity</p>
+
+                }
+                else if (item.Quantity <= item.QuantityWarningLevel)
+                {
+                    <p style="color: orange">@item.Quantity</p>
+
+                }
+                else if (item.Quantity > item.QuantityWarningLevel)
+                {
+                    <p style="color: lawngreen">@item.Quantity</p>
+                }
+
+                else
+                {
+                    < p style = "color: lawngreen" > @item.Quantity </ p >
+                }
+                @*@if (item.Quantity < item.QuantityRefill)
+                {
+                    SendLowBalanceMail("Swedish Fish");
+                }*@
+
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location)
+            </td>
+            <td>
+                @if (HttpContext.Current.User.IsInRole("Admin"))
+                {
+                    @Html.DisplayFor(modelItem => item.QuantityWarningLevel)
+                }
+            </td>
+            <td>
+                @if (HttpContext.Current.User.IsInRole("Admin"))
+                {
+                    @Html.DisplayFor(modelItem => item.QuantityRefill)
+                }
+            </td>
+            <td>
+                @if (HttpContext.Current.User.IsInRole("Admin"))
+                {
+                    @Html.DisplayFor(modelItem => item.QuantityBehavior)
+                }
+            </td>
+
+            <td>
+                @if (HttpContext.Current.User.IsInRole("Admin"))
+                {
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID })
+                }
+                @if (HttpContext.Current.User.IsInRole("Admin"))
+                {
+
+                    @Html.ActionLink("Details", "Details", new { id = item.ID })
+                }
+                @if (HttpContext.Current.User.IsInRole("Admin"))
+                {
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                }
+            </td>
+        </tr>
+    }
+    
+</table>
+<hr>
+
+<head>
+    <meta http-equiv="content-type" content="initial-scale=1.0" />
+    <title>Google Maps Multiple Markers</title>
+    <script src="http://maps.google.com/maps/api/js?sensor=false"
+            type="text/javascript"></script>
+    <style>
+        /*html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }*/
+       
+        }
+        #map {
+            position:relative;
+            height: 400px;
+            width: 400px;
+        }
+    </style>
+</head>
+<div class="container">
+    <div id="map" style="height: 500px"></div>
+
+    <script type="text/javascript">
+   var locations = [
+     ['Waukesha', 43.0117, -88.2315, 4],
+     ['Brookfield', 43.0606, -88.1065, 5],
+     ['Milwaukee', 43.0389, -87.9065, 3],
+     ['Sheboygan', 43.7508, -87.7145, 2],
+     ['Menomonee Falls', 43.1789, -88.1173, 1]
+   ];
+
+   var map = new google.maps.Map(document.getElementById('map'), {
+     zoom: 10,
+     center: new google.maps.LatLng(43.0389, -87.9065),
+     mapTypeId: google.maps.MapTypeId.HYBRID
+   });
+
+   var infowindow = new google.maps.InfoWindow();
+
+   var marker, i;
+
+   for (i = 0; i < locations.length; i++) {
+     marker = new google.maps.Marker({
+       position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+       map: map
+     });
+
+     google.maps.event.addListener(marker, 'click', (function(marker, i) {
+       return function() {
+         infowindow.setContent(locations[i][0]);
+         infowindow.open(map, marker);
+       }
+     })(marker, i));
+   }
+    </script>
+ </div>
